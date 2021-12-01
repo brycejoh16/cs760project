@@ -60,65 +60,111 @@ def unit_test_make_graph():
     out=np.array([-3,2,1,0])#-0.5,-.4,3.5,-4,3,0])
     out = [ns.Point(x) for x in out]
     # print(out)
-    G=make_graph(out,2)
+    G=make_graph(out,2,True)
 
-    fun_with_graphs(G)
-
+    # fun_with_graphs(G)
 
 
 def graph_func(p0,pN,s:nx.Graph):
     N=s.number_of_nodes()
+
     if N==1:
-        y=s.nodes[0] #todo: this is wrong
-        x=p0+(p0+pN)/2
+        y=list(s.nodes)[0] #todo: this is wrong, for now ...
+        x=p0+(pN-p0)/2
         return [(x,y)]
 
 
-    node2remove=sorted(s.nodes,reverse=True)[0]
+    node2remove=sorted(s.nodes,reverse=False)[0]
 
     s.remove_node(node2remove)
     m=[]
-    for nds in s.nodes:
-        if s.degree[nds] ==0: #todo:  check this !
+    nodes=list(s.nodes)
+    for nds in nodes:
+        if s.degree[nds] ==0:
             m.append(nds)
             s.remove_node(nds)
+
+
+
+
 
     components=[c for c in nx.connected_components(s)]
     length_list=[len(c) for c in components]
 
 
 
-    # randomly put the new basin on either side if the graph
-    if np.random.randint(0,2):
+    # todo: test this function with an ideal test set to make sure its working
+
+
+    #randomly put the new basin on either side if the graph, we don't want new ,
+    # basins always on same side of the graph.
+    if np.random.randint(0,2) and len(m)>0:
         length_list+=[len(m)]
-        components+=[{min(m)}]
-    else:
+        components+=[{max(m)}]
+        s.add_edge(max(m),max(m))
+    elif len(m)>0:
         length_list=[len(m)]+length_list
-        components=[min(m)]+ components
+        components=[{max(m)}]+ components
+        s.add_edge(max(m),max(m))
 
     # length of the given section
     xypoints=[]
-    length_of_rod=(pN*(N-1)+ p0*(N-1))/N
+    length_of_rod=(pN-p0)-(pN-p0)/N
     for l,c,i in zip(length_list,components,np.arange(len(components))):
+        # the first p0 has to have this specific value. Then after it is additive by a different amount
         if i ==0 :
             # get proper starting point for p0
-            p0+=p0 + (pN-p0)/(2*N)
+            p0=p0 + (pN-p0)/(2*N)
         else:
             p0=pN_tilde
         ratio = l / (N - 1)
         pN_tilde = p0+ ratio*length_of_rod
 
-        xypoint=graph_func(p0,pN_tilde,nx.subgraph(c))
 
+        # something here is messed up with my p0 and pN_tilde's
+        xypoints+=[(p0,node2remove)]
+        xypoints+=[(pN_tilde,node2remove)]
+        H=nx.Graph()
+        H.add_edges_from(list(s.edges(c)))
+        xypoint=graph_func(p0,pN_tilde,H)
         # add all the points that were found!!!!
         xypoints+=xypoint
 
+
     return xypoints
 
+def unit_test_graph_func():
+
+    # todo: before you get to excited you still don't know if the reduction in
+    #  phase space is correct since you never tested it. So don't get to pumped yet.
+    #  like their still definetly some errors in here.
+    # also need to test the possiblity of a multi - split.
+
+    G = nx.Graph()
+    G.add_edges_from([(2, 1), (2, 4),(5, 6), (5, 7), (6, 7),(6,1),(4,1),(1,9)])
+
+    subax1 = plt.subplot(121)
+    nx.draw(G, with_labels=True, font_weight='bold')
 
 
-        # the first p0 has to have this specific value. Then after it is additive by a different amount
+    xypoints=graph_func(0,1,G)
+        # your not even including the intial pionts boy..
+    xypoints+=[(1,0),(0,0)]
 
+    xypoints=sorted(xypoints, key=lambda xy : xy[0])
+
+    x=[xy[0] for xy in xypoints]
+    y=[xy[1] for xy in xypoints]
+
+
+    subax2 = plt.subplot(122)
+    plt.plot(x,y,markersize=10,marker='o')
+    plt.ylabel('node value')
+    plt.xlabel('')
+    plt.show()
+
+
+    print('yasss')
 
 
 
@@ -167,7 +213,7 @@ def fun_with_graphs(G:nx.Graph):
 
     # this function
 
-def make_a_graph():
+def peterson_make_a_graph():
     G = nx.petersen_graph()
     subax1 = plt.subplot(121)
     nx.draw(G, with_labels=True, font_weight='bold')
@@ -179,4 +225,5 @@ if __name__=="__main__":
     # unit_test_make_graph()
 
     # fun_with_subgraphs()
-    make_a_graph()
+    # make_a_graph()
+    unit_test_graph_func()
