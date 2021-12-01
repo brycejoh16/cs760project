@@ -27,9 +27,11 @@ def plot_gaussian_with_points(points=None,cmap=None):
 
 
 class Point:
-    def __init__(self):
-        self.x=np.random.uniform(*bounds)
-
+    def __init__(self,x=None):
+        if x==None:
+            self.x=np.random.uniform(*bounds)
+        else:
+            self.x=x
     def find_fitness(self):
         return gaussian(self.x)
 
@@ -40,12 +42,20 @@ class Point:
         return f"({self.x:0.5f},{self.find_fitness()})"
     def __call__(self):
         return self.find_fitness()
+    def distance(self,point):
+        # returns distance from one point to another.
+        return  np.linalg.norm(self.x-point.x)
+
+    def __lt__(self, other):
+        return self.find_fitness() < other.find_fitness()
+
+
 
 def cp(point):
     return copy.deepcopy(point)
 
 
-def ns(m=3,K=25,N=10):
+def ns(m=4,K=25,N=50):
     # sample m points
     np.random.seed(30)
     points=[Point() for _ in range(m)]
@@ -83,6 +93,14 @@ def ns(m=3,K=25,N=10):
     plt.clf()
 
 
+    out1=np.array([p.x for p in T]).T
+    np.savetxt('./single_guassian_3walkers/out.txt',out1)
+    return T
+
+def disconnectivity_graph():
+    pass
+    # make sure that this algorithm is robust enough to interchange the distance function.
+    # since that is what will be changing between calls
 if __name__=="__main__":
     # plot_gaussian()
     ns()
