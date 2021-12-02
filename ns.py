@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 import copy
 from matplotlib import cm
 # make a multivariate gaussian.
-def gaussian(x):
-    return np.exp((-x**2)/2) / np.sqrt(2*np.pi) # sigma =1 , mu=0
+def gaussian(x,b=0):
+    return (np.exp((-(x-b)**2)/2) / np.sqrt(2*np.pi)) # sigma =1 , mu=0
 
 bounds=[-10,10]
 
-def plot_gaussian_with_points(points=None,cmap=None):
+def plot_gaussian_with_points(fitness_func,points=None,cmap=None):
     x=np.arange(bounds[0],bounds[1],.1)
-    y=gaussian(x)
+    y=fitness_func(x)
     plt.plot(x,y,'--',label='true',c='k')
     x1=np.array([p.x for p in points])
     y1=np.array([p.find_fitness() for p in points])
@@ -21,9 +21,9 @@ def plot_gaussian_with_points(points=None,cmap=None):
         cbar.set_label('Iteration', rotation=270, labelpad=25)
     else:
         plt.scatter(x1,y1,label="samples")
-    plt.legend()
-    plt.xlabel("X")
-    plt.ylabel("Y")
+    # plt.legend()
+    # plt.xlabel("X")
+    # plt.ylabel("Y")
 
 
 class Point:
@@ -51,14 +51,22 @@ class Point:
 
 
 
+def helper_fitness_multi1D():
+    y=lambda x:gaussian(x,b=0)+gaussian(x,b=4)
+    return y
+class multiGuass1d(Point):
+    def find_fitness(self):
+        return helper_fitness_multi1D()(self.x)
+
+
 def cp(point):
     return copy.deepcopy(point)
 
 
-def ns(m=4,K=25,N=50):
+def ns(point,m=4,K=25,N=50):
     # sample m points
     np.random.seed(30)
-    points=[Point() for _ in range(m)]
+    points=[point() for _ in range(m)]
 
     # start nested sampling loop
     T=[]
@@ -79,23 +87,26 @@ def ns(m=4,K=25,N=50):
         points[0]=testpoint
         T.append(threshold)
 
-        plot_gaussian_with_points(points)
-        plt.title(f"NS k:{k}")
-        plt.savefig(f"./single_guassian_3walkers/k_{k}.png")
-        plt.clf()
+        # plot_gaussian_with_points(points)
+        # plt.title(f"NS k:{k}")
+        # plt.savefig(f"./single_guassian_3walkers/k_{k}.png")
+        # plt.clf()
 
     print("Threshold values",T)
 
     cmap=cm.get_cmap('autumn_r')
-    plot_gaussian_with_points(T,cmap=cmap)
-    plt.title(f"Single Guassian N($\mu$=0,$\sigma=1$) with threshold \npoints from each iterations of NS")
-    plt.savefig(f"./single_guassian_3walkers/thresholds.png")
+    plot_gaussian_with_points(helper_fitness_multi1D(),T,cmap=cmap)
+    # plt.title(f"Guassian N($\mu$=0,$\sigma=1$) with threshold \npoints from each iterations of NS")
+    plt.title(f"Multi Modl Guassian")
+    plt.show()
     plt.clf()
 
 
-    out1=np.array([p.x for p in T]).T
-    np.savetxt('./single_guassian_3walkers/out.txt',out1)
+    # out1=np.array([p.x for p in T]).T
+    # np.savetxt('./single_guassian_3walkers/out.txt',out1)
     return T
+
+
 
 def disconnectivity_graph():
     pass
@@ -103,7 +114,8 @@ def disconnectivity_graph():
     # since that is what will be changing between calls
 if __name__=="__main__":
     # plot_gaussian()
-    ns()
+
+    ns(multiGuass1d)
     # print(plt.colormaps())
 
 

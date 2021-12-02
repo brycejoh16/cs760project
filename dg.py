@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import networkx as nx
-
+from matplotlib import cm
 import  ns
 
 
@@ -23,6 +23,7 @@ def make_graph(out,k,show=False):
     """
     out=sorted(out, reverse=True)
     print(out)
+    print(np.arange(len(out)))
     G=nx.Graph()
 
     for i in range(len(out)):
@@ -51,7 +52,7 @@ def make_graph(out,k,show=False):
         nx.draw(G, with_labels=True, font_weight='bold')
         plt.show()
 
-    return G
+    return G,out
 
 def unit_test_make_graph():
     # out=np.loadtxt('./single_guassian_3walkers/out.txt')
@@ -65,16 +66,16 @@ def unit_test_make_graph():
     # fun_with_graphs(G)
 
 
-def graph_func(p0,pN,s:nx.Graph):
+def graph_func(p0,pN,s:nx.Graph,out):
     N=s.number_of_nodes()
 
     if N==1:
-        y=list(s.nodes)[0] #todo: this is wrong, for now ...
+        y=out[list(s.nodes)[0]]() #todo: this is wrong, for now ...
         x=p0+(pN-p0)/2
         return [(x,y)]
 
 
-    node2remove=sorted(s.nodes,reverse=False)[0]
+    node2remove=sorted(s.nodes,reverse=True)[0]
 
     s.remove_node(node2remove)
     m=[]
@@ -98,14 +99,18 @@ def graph_func(p0,pN,s:nx.Graph):
 
     #randomly put the new basin on either side if the graph, we don't want new ,
     # basins always on same side of the graph.
+
+
     if np.random.randint(0,2) and len(m)>0:
+        m_i=min(m)
         length_list+=[len(m)]
-        components+=[{max(m)}]
-        s.add_edge(max(m),max(m))
+        components+=[{m_i}]
+        s.add_edge(m_i,m_i)
     elif len(m)>0:
+        m_i=min(m)
         length_list=[len(m)]+length_list
-        components=[{max(m)}]+ components
-        s.add_edge(max(m),max(m))
+        components=[{m_i}]+ components
+        s.add_edge(m_i,m_i)
 
     # length of the given section
     xypoints=[]
@@ -122,11 +127,11 @@ def graph_func(p0,pN,s:nx.Graph):
 
 
         # something here is messed up with my p0 and pN_tilde's
-        xypoints+=[(p0,node2remove)]
-        xypoints+=[(pN_tilde,node2remove)]
+        xypoints+=[(p0,out[node2remove]())]
+        xypoints+=[(pN_tilde,out[node2remove]())]
         H=nx.Graph()
         H.add_edges_from(list(s.edges(c)))
-        xypoint=graph_func(p0,pN_tilde,H)
+        xypoint=graph_func(p0,pN_tilde,H,out)
         # add all the points that were found!!!!
         xypoints+=xypoint
 
@@ -164,8 +169,47 @@ def unit_test_graph_func():
     plt.show()
 
 
-    print('yasss')
 
+
+def unit_Test_graph_ns(neighbors=2):
+    # out = np.array([-3, 2, 1, 0, -0.5,-.4,3.5,-4,3,0])
+
+    # out=np.loadtxt('single_guassian_3walkers/out.txt')
+    # out = [ns.Point(x) for x in out]
+    out=ns.ns(ns.multiGuass1d,m=5,K=25,N=100)
+    # print(out)
+
+    # the ordering of out effects the results a lot,
+    # so to remain consistent I've decided to just have out ,
+    # be returned from the graph so its exact.
+    G,out = make_graph(out,neighbors, False)
+
+    # subax1 = plt.subplot(131)
+    # nx.draw(G, with_labels=True, font_weight='bold')
+
+
+    xypoints = graph_func(0, 1, G,out)
+    # your not even including the intial pionts boy..
+    xypoints += [(1, 0), (0, 0)]
+
+    xypoints = sorted(xypoints, key=lambda xy: xy[0])
+
+    x = [xy[0] for xy in xypoints]
+    y = [xy[1] for xy in xypoints]
+    plt.title(f"Neighbors{neighbors}")
+    subax2 = plt.subplot(121)
+    plt.plot(x, y, markersize=5, marker='o')
+
+    plt.ylim([-.1,.5])
+
+
+
+    subax3= plt.subplot(122)
+
+    cmap = cm.get_cmap('autumn_r')
+    ns.plot_gaussian_with_points(ns.helper_fitness_multi1D(),points=sorted(out), cmap=cmap)
+    plt.ylim([-.1,.5])
+    plt.savefig(f"./dg_unit_tests/ns.multiGuass1d,m=5,K=25,N=100,neighbors={neighbors}.png")
 
 
 
@@ -226,4 +270,5 @@ if __name__=="__main__":
 
     # fun_with_subgraphs()
     # make_a_graph()
-    unit_test_graph_func()
+    # unit_test_graph_func()
+    unit_Test_graph_ns()
