@@ -176,7 +176,8 @@ def unit_Test_graph_ns(neighbors=2):
 
     # out=np.loadtxt('single_guassian_3walkers/out.txt')
     # out = [ns.Point(x) for x in out]
-    out=ns.ns(ns.multiGuass1d,m=5,K=25,N=100)
+    input={'point':ns.multiGuass1d, 'm' : 5, 'K' : 15, 'N' :100}
+    out=ns.ns(**input)
     # print(out)
 
     # the ordering of out effects the results a lot,
@@ -209,9 +210,7 @@ def unit_Test_graph_ns(neighbors=2):
     cmap = cm.get_cmap('autumn_r')
     ns.plot_gaussian_with_points(ns.helper_fitness_multi1D(),points=sorted(out), cmap=cmap)
     plt.ylim([-.1,.5])
-    plt.savefig(f"./dg_unit_tests/ns.multiGuass1d,m=5,K=25,N=100,neighbors={neighbors}.png")
-
-
+    plt.savefig(f"./dg_unit_tests/{input},neighbors={neighbors}.png")
 
 
 
