@@ -1,3 +1,8 @@
+import numpy as np
+from skimage.morphology import reconstruction
+from scipy.signal import find_peaks
+from skimage import filters
+
 def fillCount(image): # fills enclosed parts and counts pixels > 0
     seed = np.copy(image)
     seed[1:-1, 1:-1] = image.max()
@@ -60,14 +65,17 @@ def ratioPeakCount(image):
     ratio = horizontalPeakCount(image)/verticalPeakCount(image)
     return ratio
 
+# does roberts edge detection and counts peaks in the vertical direction
 def edgeDetectVertical(image):
     edgeImage = filters.roberts(image)
     return verticalPeakCount(edgeImage)
 
+# does roberts edge detection and counts peaks in the horizontal direction
 def edgeDetectHorizontal(image):
     edgeImage = filters.roberts(image)
     return horizontalPeakCount(edgeImage)
 
+# edge detection and returns ratio of peaks in horizontal and vertical direction
 def edgeDetectRatio(image):
     edgeImage = filters.roberts(image)
     return ratioPeakCount(edgeImage)
