@@ -2,8 +2,9 @@
 import ns,dg,fs
 from scipy.stats import multivariate_normal
 import numpy as np
+import torch
 import matplotlib.pyplot as plt
-
+import generator as g
 
 def gaussian(x,b=0):
     return (np.exp((-(x-b)**2)/2) / np.sqrt(2*np.pi)) # sigma =1 , mu=0
@@ -53,27 +54,33 @@ class multiVariateNormal2D_multimodal(multiVariateNormal2D_unimodal):
         return helper_multiVariateNormal2D_multimodal()(self.x)
 
 
+class labeling(ns.Point):
+    # parent class for all the labeling functions,
+    # since only thing that will change will be the
+    # calls to find_fitness
+    def __init__(self, x=None):
+        # i could just save the x vector in
+        self.generator=g.load_generator()
+        if np.all(x==None):
+            z = g.z()
+            with torch.no_grad():
+                pz = self.generator(z).view(28 * 28)
+            x = g.torch2numpy(pz)
+            # want to generate a single image from the generator.
+            # then save it as a flattened numpy array.
+        super().__init__(x)
+    def mutate(self):
+        ## need to get a new z.
+        z=g.z()
+        with torch.no_grad():
+            pz = self.generator(z).view(28*28)
+        self.x=g.torch2numpy(pz)
 
-# class labeling(ns.Point):
-#     # parent class for all the labeling functions,
-#     # since only thing that will change will be the
-#     # calls to find_fitness
-#     def __init__(self, x=None):
-#         # i could just save the x vector in
-#         super().__init__(x)
-#         self.generator= # load the model here
-#         if np.all(self.x==None):
-#             pass
-#             # want to generate a single image from the generator.
-#
-#     def mutate(self):
-#         pass
-#     def distance(self,point):
-#         pass
 
-
-
-
+class lambda1(labeling):
+    def find_fitness(self):
+        #todo have the method to find the fitness!
+        pass
 
 
 def main_ns(input):
@@ -104,14 +111,42 @@ def main_dg(neighbors,input):
         # then like yeah nvmd that's all i want to do lol.
 
 
+
+def unit_test_labeling_class():
+
+    # could run mutations here and show that like most images that are generated
+    # we expect to have low fitness. B/c they are a bit nonsense. But I'd say that's evidence its working. LOL>)
+    lbs=[labeling() for _ in range(2)]
+    fig=plt.figure()
+    ax=fig.add_subplot(1,4,1)
+    ax.imshow(lbs[0].x.reshape(28,28))
+    ax=fig.add_subplot(1,4,2)
+    ax.imshow(lbs[1].x.reshape(28, 28))
+
+
+    lbs[0].mutate()
+
+    ax=fig.add_subplot(1,4,3)
+    ax.imshow(lbs[0].x.reshape(28,28))
+
+
+    lbs[1].mutate()
+
+    ax=fig.add_subplot(1,4,4)
+    ax.imshow(lbs[1].x.reshape(28,28))
+    fig.show()
+
+
+
 if __name__=="__main__":
 
 
-    input= {'point': multiVariateNormal2D_multimodal, 'm': 20, 'K': 100, 'N': 100}
+    # input= {'point': multiVariateNormal2D_multimodal, 'm': 20, 'K': 100, 'N': 100}
     # main_ns(input)
 
-    main_dg(3,input)
+    # main_dg(3,input)
 
+    unit_test_labeling_class()
 
 
 
