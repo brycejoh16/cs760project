@@ -43,8 +43,6 @@ class Point:
         return np.all(abs(self.x - other.x) < np.array([tol,tol])) and abs(self.find_fitness()- other.find_fitness())<tol
 
 
-
-
 def cp(point):
     return copy.deepcopy(point)
 
@@ -92,7 +90,7 @@ def ns(point,m=10,K=50,N=50,checkpoint=None):
                 # save stuff.
                 input={'point':point,'m':m,'K':K,'N':N}
                 fname=fs.filename_ns(input)
-                X=[t.x for t in T]
+                X=np.array([t.x for t in T])
                 np.savetxt(fname,X)
 
     return T
