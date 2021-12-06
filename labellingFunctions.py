@@ -41,6 +41,7 @@ def euclideanDistance(x):
   return np.sum((zeroImage-x)**2)
 
 def euclideanBinarize(x):
+    # this is super wierd b/c like it'c coming from
     x = x.copy()
     zeroImage = x.copy() * 0
     return np.sum((zeroImage - x) ** 2)
@@ -60,9 +61,10 @@ def horizontalPeakCount(x):
     return len(find_peaks(counts)[0])
 
 # counts peaks in the vertical direction of the image
-def verticalPeakCount(image):
+def verticalPeakCount(x):
+    image=x.reshape(28,28).T
     counts = []
-    image = np.copy(image).transpose()
+    # image = np.copy(image).transpose()
     for i in image:
         count = 0
         for j in i:
@@ -72,21 +74,26 @@ def verticalPeakCount(image):
     return len(find_peaks(counts)[0])
 
 # returns ratio of peaks in horizontal direction to peaks in vertical direction
-def ratioPeakCount(image):
-    ratio = horizontalPeakCount(image)/verticalPeakCount(image)
+def ratioPeakCount(x):
+    image=x.reshape(28,28)
+    # added one to account for ones that return zero vertical peak count.
+    ratio = horizontalPeakCount(image)/(verticalPeakCount(x)+1)
     return ratio
 
 # does roberts edge detection and counts peaks in the vertical direction
-def edgeDetectVertical(image):
+def edgeDetectVertical(x):
+    image = x.reshape(28, 28)
     edgeImage = filters.roberts(image)
     return verticalPeakCount(edgeImage)
 
 # does roberts edge detection and counts peaks in the horizontal direction
-def edgeDetectHorizontal(image):
+def edgeDetectHorizontal(x):
+    image = x.reshape(28, 28)
     edgeImage = filters.roberts(image)
     return horizontalPeakCount(edgeImage)
 
 # edge detection and returns ratio of peaks in horizontal and vertical direction
-def edgeDetectRatio(image):
+def edgeDetectRatio(x):
+    image = x.reshape(28, 28)
     edgeImage = filters.roberts(image)
     return ratioPeakCount(edgeImage)

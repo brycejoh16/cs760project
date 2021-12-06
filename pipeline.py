@@ -102,6 +102,14 @@ class lambda5(labeling):
 class horizontalPeakCount(labeling):
     def find_fitness(self):
         return lf.horizontalPeakCount(self.x)
+
+class lambda6(labeling):
+    def find_fitness(self):
+        return lf.ratioPeakCount(self.x)
+
+class lambda7(labeling):
+    def find_fitness(self):
+        return lf.edgeDetectRatio(self.x)
 def main_ns(input):
     T=ns.ns(**input)
     # # save the data what we just made
@@ -214,11 +222,11 @@ if __name__=="__main__":
 
     # make sure to have an N that properly dissociates
 
-    input= {'point': lambda3, 'm': 20, 'K': 150, 'N': 100}
+    input= {'point': lambda7, 'm': 20, 'K': 150, 'N': 100}
     # i bet you lambda3 didn't actually converge lol. b/c like why it makes
     # no sense. some of them should have way higher norms.
-    # main_ns(input)
-    main_dg(2,input)
+    main_ns(input)
+    # main_dg(10,input)
 
     # unit_test_labeling_class()
 
