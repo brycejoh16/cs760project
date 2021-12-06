@@ -1,13 +1,17 @@
 from torch import  nn
 import torch
 import matplotlib.pyplot as plt
+import labellingFunctions as lf
+
 
 # need to have a manual seed for reproducibility purposes...
 # but this could be in the wrong place.
-torch.manual_seed(29)
+torch.manual_seed(767)
 nz = 128  # latent vector size
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+
+### generator adopted and trained from Sala , Et. al.
 class Generator(nn.Module):
     def __init__(self, nz):
         super(Generator, self).__init__()
@@ -35,7 +39,7 @@ def z():
     return create_noise(1,nz)
 def load_generator():
     model = Generator(nz).to(device)
-    model.load_state_dict(torch.load("generator01_test.pth"))
+    model.load_state_dict(torch.load("generator_200_01.pth"))
     model.eval()
     return model
 
@@ -52,6 +56,11 @@ def try_to_load_generator():
         plt.show()
 
 
+
+
+
+
 if __name__ == '__main__':
-    for _  in range(8):
-        try_to_load_generator()
+    pass
+    # for _  in range(8):
+    #     try_to_load_generator()

@@ -24,7 +24,9 @@ class Point:
         raise Exception("Must be over-ridden in child class")
 
     def __repr__(self):
-        return f"({self.x},{self.find_fitness()})"
+        if self.x.shape[0]<3:
+            return f"({self.x},{self.find_fitness()})"
+        return f"({self.find_fitness()})"
     def __call__(self):
         return self.find_fitness()
     def distance(self,point):
@@ -39,8 +41,9 @@ class Point:
 
     def __eq__(self, other):
         tol=1e-6
+        xtol=np.ones_like(other)*tol
         if not isinstance(other, type(self)): return NotImplemented
-        return np.all(abs(self.x - other.x) < np.array([tol,tol])) and abs(self.find_fitness()- other.find_fitness())<tol
+        return np.all(abs(self.x - other.x) < xtol) and abs(self.find_fitness()- other.find_fitness())<tol
 
 
 def cp(point):

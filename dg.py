@@ -75,7 +75,7 @@ def graph_func(p0,pN,s:nx.Graph,out):
     if N==1:
         y=out[list(s.nodes)[0]]()
         x=p0+(pN-p0)/2
-        return [(x,y)]
+        return [(x,y,out[list(s.nodes)[0]].x)]
 
 
     node2remove=sorted(s.nodes,reverse=True)[0]
@@ -162,6 +162,7 @@ def unit_test_graph_func():
     plt.ylabel('node value')
     plt.xlabel('')
     plt.show()
+
 
 
 
@@ -264,7 +265,7 @@ def get_xypoints(neighbors, out):
     # nx.draw(G, with_labels=True, font_weight='bold')
     xypoints = graph_func(0, 1, G, out)
     # your not even including the intial pionts boy..
-    xypoints += [(1, 0), (0, 0)]
+    # xypoints += [(1, 0), (0, 0)]
     xypoints = sorted(xypoints, key=lambda xy: xy[0])
     return xypoints,out
 

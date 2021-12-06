@@ -1,5 +1,40 @@
 
 
+import labellingFunctions as lf
+import torchvision.datasets as datasets
+import torchvision.transforms as transforms
+import generator as g
+import matplotlib.pyplot as plt
+transform = transforms.Compose([
+                                transforms.ToTensor(),
+                                transforms.Normalize((0.5,),(0.5,)),
+])
+train_data = datasets.MNIST(
+    root='input/data',
+    train=True,
+    download=True,
+    transform=transform
+)
+
+def testing_labelingfunc():
+
+    zero=train_data.data[train_data.targets==0][0]
+    x=g.torch2numpy(zero)
+    fig=plt.figure()
+    fig.suptitle('fill sum')
+    ax=fig.add_subplot(1,2,1)
+    ax.imshow(x)
+    count,filled=lf.fillSum(x)
+    ax=fig.add_subplot(1,2,2)
+    ax.imshow(filled)
+
+
+    fig.show()
+if __name__ == '__main__':
+    testing_labelingfunc()
+
+
+
 
 
 # this is the file for doing the weak supervision.
@@ -20,4 +55,3 @@
 
 ##### lol how are we going to test the accuracy metric here. idk yet. well that is definetely still up for debate.
 # I'm going to have to refresh myself on a lot of snorkel stuff.
-

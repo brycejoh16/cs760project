@@ -2,11 +2,12 @@ import numpy as np
 from skimage.morphology import reconstruction
 from scipy.signal import find_peaks
 from skimage import filters
-
-def fillCount(image): # fills enclosed parts and counts pixels > 0
-    seed = np.copy(image)
-    seed[1:-1, 1:-1] = image.max()
-    mask = np.copy(image)
+def fillCount(x):
+    # fills enclosed parts and counts pixels > 0
+    x=x.reshape(28,28)
+    seed =x.copy()
+    seed[1:-1, 1:-1] = x.max()
+    mask = x
 
     filled = reconstruction(seed, mask, method='erosion')
     count = 0
@@ -16,31 +17,41 @@ def fillCount(image): # fills enclosed parts and counts pixels > 0
             count += 1
     return count
 
- def fillSum(image): # fills enclosed parts and sums grayscale image
-    seed = np.copy(image)
-    seed[1:-1, 1:-1] = image.max()
-    mask = np.copy(image)
+def fillSum(x): # fills enclosed parts and sums grayscale image
+    x = x.reshape(28, 28)
+    seed =x.copy()
+    seed[1:-1, 1:-1] = x.max()
+    mask = x
     filled = reconstruction(seed, mask, method='erosion')
     return np.sum(filled)
 
-def pixelCount(image): # counts pixels > 0 in the image
+def pixelCount(x): # counts pixels > 0 in the image
+    image=x.reshape(28,28)
     count = 0
-    for i in np.copy(image):
+    for i in image:
         for j in i:
             if j > 0:
                 count += 1
     return count
 
 # calculates euclidean distance of each image from the _0_ matrix
-def euclideanDistance(image):
-  image = np.copy(image)
-  zeroImage = image*0
-  return np.sum((zeroImage-image)**2)
+# this is the L2 norm
+def euclideanDistance(x):
+  zeroImage = np.ones_like(x)*-1
+  return np.sum((zeroImage-x)**2)
+
+def euclideanBinarize(x):
+    x = x.copy()
+    zeroImage = x.copy() * 0
+    return np.sum((zeroImage - x) ** 2)
+
+
 
 # counts peaks in the horizontal direction of the image
-def horizontalPeakCount(image):
+def horizontalPeakCount(x):
+    x=x.reshape(28,28)
     counts = []
-    for i in np.copy(image):
+    for i in x:
         count = 0
         for j in i:
             if j > 0:
