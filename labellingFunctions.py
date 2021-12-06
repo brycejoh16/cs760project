@@ -1,9 +1,11 @@
+# --- Library Imports ----------------------------------------------------------
 import numpy as np
 from skimage.morphology import reconstruction
 from scipy.signal import find_peaks
 from skimage import filters
-def fillCount(x):
-    # fills enclosed parts and counts pixels > 0
+
+# --- Noisy Labelling Functions for MNIST dataset ------------------------------
+def fillCount(x): # fills enclosed parts and counts pixels > 0
     x=x.reshape(28,28)
     seed =x.copy()
     seed[1:-1, 1:-1] = x.max()
@@ -74,11 +76,12 @@ def verticalPeakCount(x):
     return len(find_peaks(counts)[0])
 
 # returns ratio of peaks in horizontal direction to peaks in vertical direction
-def ratioPeakCount(x):
-    image=x.reshape(28,28)
-    # added one to account for ones that return zero vertical peak count.
-    ratio = horizontalPeakCount(image)/(verticalPeakCount(x)+1)
-    return ratio
+def ratioPeakCount(image):
+  vpc = verticalPeakCount(image)
+  if vpc == 0:
+    return horizontalPeakCount(image)
+  else:
+    return horizontalPeakCount(image)/vpc
 
 # does roberts edge detection and counts peaks in the vertical direction
 def edgeDetectVertical(x):
