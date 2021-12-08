@@ -1,10 +1,9 @@
-
-
 import dg,fs
 import numpy as np
 import ns
 import matplotlib.pyplot as plt
 import pipeline as pl
+
 def neighbors_comparison_multi_modal_gaussian():
 
     for k in [1,2,3,10]:
@@ -48,6 +47,7 @@ def visualize_landscape():
     ax.set_ylabel("$x_2$")
     ax.set_xlabel("$x_1$")
     fig.savefig(fs.make_dir(input['point'])+f"/{input}.png")
+
 def plot_gaussian_with_points(fitness_func,points=None,cmap=None):
     x=np.arange(ns.bounds[0],ns.bounds[1],.1)
     y=fitness_func(x)
@@ -60,7 +60,6 @@ def plot_gaussian_with_points(fitness_func,points=None,cmap=None):
         cbar.set_label('Iteration', rotation=270, labelpad=25)
     else:
         plt.scatter(x1,y1,label="samples")
-
 
 def unit_test_with_plots():
     pass

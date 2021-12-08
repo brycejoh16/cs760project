@@ -28,9 +28,9 @@ def lf_PixelCount(x):
         return 0
 
 def fill(image): # fills enclosed areas in image and returns filled image
-    seed = x.copy()
-    seed[1:-1, 1:-1] = x.max()
-    mask = x
+    seed = image.copy()
+    seed[1:-1, 1:-1] = image.max()
+    mask = image
     filledImage = reconstruction(seed, mask, method='erosion')
     return filledImage
 
@@ -67,7 +67,7 @@ def lf_FillSum(x):
     else:
         return 0
 
-def l2Norm(image): # returns the L2 norm of the image
+def l2Norm(x): # returns the L2 norm of the image
     image = x.reshape(28, 28)
     return np.linalg.norm(image)
 

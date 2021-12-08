@@ -1,5 +1,3 @@
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -10,7 +8,6 @@ import pipeline as pl
 
 import os
 
-
 def filter_out_None(nk):
     Nk = []
     for elem in nk:
@@ -18,6 +15,7 @@ def filter_out_None(nk):
             Nk.append(elem)
 
     return Nk
+
 def make_graph(out,k,show=False):
     """
     Makes DG from NS output.
@@ -319,6 +317,7 @@ def peterson_make_a_graph():
     subax2 = plt.subplot(122)
     nx.draw_shell(G, nlist=[range(5, 10), range(5)], with_labels=True, font_weight='bold')
     plt.show()
+    
 if __name__=="__main__":
     # unit_test_make_a_graph_from_list_of_numbers()
     # unit_test_make_graph()
