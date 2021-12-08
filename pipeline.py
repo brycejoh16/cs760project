@@ -122,6 +122,41 @@ class lambda6(labeling):
 class lambda7(labeling):
     def find_fitness(self):
         return lf.edgeDetectRatio(self.x)
+
+
+class pixelCount(labeling):
+    def find_fitness(self):
+        return lf.pixelCount(self.x,lowestValue=-.9)
+class fillSum(labeling):
+    def find_fitness(self):
+        return lf.fillSum(self.x)
+
+class fillCount(labeling):
+    def find_fitness(self):
+        return lf.fillCount(self.x, -.9)
+class horizontalPeakCount_round2(labeling):
+    def find_fitness(self):
+        return lf.horizontalPeakCount(self.x)
+
+class verticalPeakCount(labeling):
+    def find_fitness(self):
+        return lf.verticalPeakCount(self.x,lowestValue=-.5)
+
+class ratioPeakCount(labeling):
+    def find_fitness(self):
+        return lf.ratioPeakCount(self.x,lowestValue=-0.5)
+
+class edgeDetectHorizontal(labeling):
+    def find_fitness(self):
+        return lf.edgeDetectHorizontal(self.x)
+
+class fourier_Transorm(labeling):
+    def find_fitness(self):
+        return lf.fourier_Transorm(self.x)
+class fft_ndimensions(labeling):
+    def find_fitness(self):
+        return lf.fft_ndimensions(self.x)
+
 def main_ns(input):
     T=ns.ns(**input)
     # # save the data what we just made
@@ -230,15 +265,15 @@ def unit_test_labeling_class():
 
 if __name__=="__main__":
 
-
-
     # make sure to have an N that properly dissociates
-
-    input=  {'point':multiVariateNormal2D_multimodal_diff, 'm': 20, 'K': 100, 'N': 100,'checkpoint':10}
+    point_funcs=[pixelCount,fillSum]
+    input=  {'point':fft_ndimensions, 'm': 20, 'K': 300, 'N': 100,'checkpoint':10}
     # i bet you lambda3 didn't actually converge lol. b/c like why it makes
     # no sense. some of them should have way higher norms.
-    # main_ns(input)
-    main_dg(10,input)
+    main_ns(input)
+
+    for i in [1,2,3,4,5,8,10]:
+        main_dg(i,input)
     # unit_test_labeling_class()
     # unit_test_labeling_class()
 
