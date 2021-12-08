@@ -3,6 +3,7 @@ import numpy as np
 from skimage.morphology import reconstruction
 from scipy.signal import find_peaks
 from skimage import filters
+from snorkel.labeling import labeling_function
 
 # --- Noisy Labelling Functions for MNIST dataset ------------------------------
 
