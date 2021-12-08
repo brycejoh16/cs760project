@@ -62,21 +62,7 @@ def plot_gaussian_with_points(fitness_func,points=None,cmap=None):
         plt.scatter(x1,y1,label="samples")
 
 
-def unit_test_with_plots():
-    pass
-    # todo: make it so I can add an image to the plot using those like
-    # annotation stuff.
 
-    fig =plt.figure()
-    ax=fig.add_subplot(1,1)
-
-    ax.add_artist(  # ax can be added image as artist.
-        AnnotationBbox(
-            OffsetImage(image)
-            , (record.Age, record.Win)
-            , frameon=False
-        )
-    )
 
 if __name__=="__main__":
     # neighbors_comparison_multi_modal_gaussian()
