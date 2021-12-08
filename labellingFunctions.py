@@ -5,11 +5,11 @@ from scipy.signal import find_peaks
 from skimage import filters
 from snorkel.labeling import labeling_function
 
-# --- Noisy Labelling Functions for MNIST dataset ------------------------------
+# --- Noisy labeling Functions for MNIST dataset -------------------------------
 
 # Continuous variable functions and their helper functions return continuous
-# variables for classifying MNIST data, Snorkel labelling functions return class
-# labels based on continuous variables and are prefixed lf for labelling
+# variables for classifying MNIST data, Snorkel labeling functions return class
+# labels based on continuous variables and are prefixed lf for labeling
 # function.
 
 # counts nonempty (greater than lowestValue) pixels in the image array x
