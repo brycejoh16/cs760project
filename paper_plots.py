@@ -10,7 +10,7 @@ def neighbors_comparison_multi_modal_gaussian():
         dg.unit_Test_graph_ns(neighbors=k)
 
 def visualize_landscape():
-    input = {'point': pl.multiVariateNormal2D_multimodal, 'm': 20, 'K': 100, 'N': 100,'checkpoint':10}
+    input = {'point': pl.multiVariateNormal2D_multimodal_diff, 'm': 20, 'K': 100, 'N': 100,'checkpoint':10}
     out = ns.ns(**input)
 
     # you have to do this b/c this is what is done in the DG.
@@ -18,7 +18,7 @@ def visualize_landscape():
 
     x, y = np.mgrid[ns.bounds[0]:ns.bounds[1]:.1, ns.bounds[0]:ns.bounds[1]:.1]
     pos = np.dstack((x, y))
-    z = pl.helper_multiVariateNormal2D_multimodal()(pos)
+    z = pl.helper_multiVariateNormal2D_multimoda_diff()(pos)
     fig = plt.figure()
 
     # syntax for 3-D plotting

@@ -55,6 +55,16 @@ class multiVariateNormal2D_multimodal(multiVariateNormal2D_unimodal):
     def find_fitness(self):
         return helper_multiVariateNormal2D_multimodal()(self.x)
 
+def helper_multiVariateNormal2D_multimoda_diff():
+    rv = multivariate_normal([-1, 3], [[1, -.5], [-.5, 1]])
+    ra = multivariate_normal([2, 2], [[1, 0], [0, 1]])
+    rb=multivariate_normal([-4,-4],[[1,0],[0,1]])
+    return lambda x: rv.pdf(x)+ra.pdf(x)+rb.pdf(x)
+
+class multiVariateNormal2D_multimodal_diff(multiVariateNormal2D_unimodal):
+    def find_fitness(self):
+        return helper_multiVariateNormal2D_multimoda_diff()(self.x)
+
 
 class labeling(ns.Point):
     # parent class for all the labeling functions,
@@ -224,11 +234,11 @@ if __name__=="__main__":
 
     # make sure to have an N that properly dissociates
 
-    input= {'point': horizontalPeakCount_params, 'm': 20, 'K': 250, 'N': 100}
+    input=  {'point':multiVariateNormal2D_multimodal_diff, 'm': 20, 'K': 100, 'N': 100,'checkpoint':10}
     # i bet you lambda3 didn't actually converge lol. b/c like why it makes
     # no sense. some of them should have way higher norms.
     # main_ns(input)
-    main_dg(2,input)
+    main_dg(10,input)
     # unit_test_labeling_class()
     # unit_test_labeling_class()
 
