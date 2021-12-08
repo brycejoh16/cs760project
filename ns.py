@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
@@ -17,6 +16,7 @@ class Point:
         if x is None:
             raise Exception("must define self.x silly")
         self.x=x
+
     def find_fitness(self):
         raise Exception("Must be over-ridden in child class ")
 
@@ -27,8 +27,10 @@ class Point:
         if self.x.shape[0]<3:
             return f"({self.x},{self.find_fitness()})"
         return f"({self.find_fitness()})"
+
     def __call__(self):
         return self.find_fitness()
+
     def distance(self,point):
         # returns distance from one point to another.
         return  np.linalg.norm(self.x-point.x)
@@ -45,10 +47,8 @@ class Point:
         if not isinstance(other, type(self)): return NotImplemented
         return np.all(abs(self.x - other.x) < xtol) and abs(self.find_fitness()- other.find_fitness())<tol
 
-
 def cp(point):
     return copy.deepcopy(point)
-
 
 def ns(point,m=10,K=50,N=50,checkpoint=None):
     # sample m points
@@ -124,8 +124,6 @@ def fun_with_3Dplots():
     ax.plot_surface(x, y, z, cmap='autumn_r', edgecolor='orange')
     ax.set_title('Surface plot geeks for geeks')
     plt.show()
-
-
 
 if __name__=="__main__":
     pass

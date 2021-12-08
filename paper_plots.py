@@ -1,10 +1,9 @@
-
-
 import dg,fs
 import numpy as np
 import ns
 import matplotlib.pyplot as plt
 import pipeline as pl
+
 def neighbors_comparison_multi_modal_gaussian():
 
     for k in [1,2,3,10]:
@@ -48,6 +47,7 @@ def visualize_landscape():
     ax.set_ylabel("$x_2$")
     ax.set_xlabel("$x_1$")
     fig.savefig(fs.make_dir(input['point'])+f"/{input}.png")
+
 def plot_gaussian_with_points(fitness_func,points=None,cmap=None):
     x=np.arange(ns.bounds[0],ns.bounds[1],.1)
     y=fitness_func(x)
@@ -61,8 +61,21 @@ def plot_gaussian_with_points(fitness_func,points=None,cmap=None):
     else:
         plt.scatter(x1,y1,label="samples")
 
+def unit_test_with_plots():
+    pass
+    # todo: make it so I can add an image to the plot using those like
+    # annotation stuff.
 
+    fig =plt.figure()
+    ax=fig.add_subplot(1,1)
 
+    ax.add_artist(  # ax can be added image as artist.
+        AnnotationBbox(
+            OffsetImage(image)
+            , (record.Age, record.Win)
+            , frameon=False
+        )
+    )
 
 if __name__=="__main__":
     # neighbors_comparison_multi_modal_gaussian()

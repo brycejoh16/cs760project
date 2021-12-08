@@ -35,8 +35,10 @@ def torch2numpy(a:torch.Tensor):
 
 def create_noise(sample_size, nz):
     return torch.randn(sample_size, nz).to(device)
+
 def z():
     return create_noise(1,nz)
+    
 def load_generator():
     model = Generator(nz).to(device)
     model.load_state_dict(torch.load("generator_200_01.pth"))
@@ -54,11 +56,6 @@ def try_to_load_generator():
         pz=model(z).view(28,28)
         plt.imshow(pz)
         plt.show()
-
-
-
-
-
 
 if __name__ == '__main__':
     pass
