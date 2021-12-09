@@ -1,30 +1,28 @@
-# --- Library Imports ----------------------------------------------------------
+# --- Imports ------------------------------------------------------------------
 import numpy as np
 from skimage.morphology import reconstruction
 from scipy.signal import find_peaks
 from scipy.fft import fft,fftn
 from skimage import filters
-from sklearn.linear_model import LogisticRegression
-# from snorkel.labeling import labeling_function
+from snorkel.labeling import labeling_function
 
 # --- Noisy labeling Functions for MNIST dataset -------------------------------
 
 # Continuous variable functions and their helper functions return continuous
 # variables for classifying MNIST data, Snorkel labeling functions return class
-# labels based on continuous variables and are prefixed lf for labeling
-# function.
+# labels based on continuous variables and are prefixed classify.
 
 # counts nonempty (greater than lowestValue) pixels in the image array x
 def pixelCount(x, lowestValue=-1, axis=None):
     return np.count_nonzero(x > lowestValue, axis=axis)
 
-# @labeling_function()
-def lf_PixelCount(x):
+@labeling_function()
+def classifyPixelCount(x):
     # Return a label of 0 if pixelCount() < threshold, otherwise 1
     threshold = 130 # threshold between 0 and 1
-    pixelCount = pixelCount(x)
+    var = pixelCount(x)
 
-    if pixelCount < threshold:
+    if var < threshold:
         return 1
     else:
         return 0
@@ -42,13 +40,13 @@ def fillCount(x,lowestValue=-1): # fills enclosed parts and returns count of non
     count = pixelCount(filledImage,lowestValue=lowestValue)
     return count
 
-# @labeling_function()
-def lf_FillCount(x):
+@labeling_function()
+def classifyFillCount(x):
     # Return a label of 0 if fillCount() < threshold, otherwise 1
     threshold = 150 # threshold between 0 and 1
-    fillCount = fillCount(x)
+    var = fillCount(x)
 
-    if fillCount < threshold:
+    if var < threshold:
         return 1
     else:
         return 0
@@ -58,13 +56,13 @@ def fillSum(x): # fills enclosed parts and sums grayscale image
     filled = fill(image)
     return np.sum(filled)
 
-# @labeling_function()
-def lf_FillSum(x):
+@labeling_function()
+def classifyFillSum(x):
     # Return a label of 0 if fillSum() < threshold, otherwise 1
     threshold = -550 # threshold between 0 and 1
-    fillSum = fillSum(x)
+    var = fillSum(x)
 
-    if fillSum < threshold:
+    if var < threshold:
         return 1
     else:
         return 0
@@ -73,13 +71,13 @@ def l2Norm(x): # returns the L2 norm of the image
     image = x.reshape(28, 28)
     return np.linalg.norm(image)
 
-# @labeling_function()
-def lf_L2Norm(x):
+@labeling_function()
+def classifyL2Norm(x):
     # Return a label of 0 if l2Norm() < threshold, otherwise 1
     threshold = 27.1 # threshold between 0 and 1
-    l2Norm = l2Norm(x)
+    var = l2Norm(x)
 
-    if l2Norm < threshold:
+    if var < threshold:
         return 0
     else:
         return 1
@@ -97,13 +95,13 @@ def horizontalPeakCount(x, lowestValue=-1):
     image = x.reshape(28,28)
     return peakCount(image, lowestValue, height, prominence, axis=0)
 
-# @labeling_function()
-def lf_HorizontalPeakCount(x):
+@labeling_function()
+def classifyHorizontalPeakCount(x):
     # Return a label of 0 if horizontalPeakCount() < threshold, otherwise 1
     threshold = 1.5 # threshold between 0 and 1
-    hpc = horizontalPeakCount(x)
+    var = horizontalPeakCount(x)
 
-    if hpc < threshold:
+    if var < threshold:
         return 1
     else:
         return 0
@@ -115,13 +113,13 @@ def verticalPeakCount(x, lowestValue=-1):
     image = x.reshape(28,28)
     return peakCount(image, lowestValue, height, prominence, axis=1)
 
-# @labeling_function()
-def lf_VerticalPeakCount(x):
+@labeling_function()
+def classifyVerticalPeakCount(x):
     # Return a label of 0 if verticalPeakCount() < threshold, otherwise 1
     threshold = 0.5 # threshold between 0 and 1
-    vpc = verticalPeakCount(x)
+    var = verticalPeakCount(x)
 
-    if vpc < threshold:
+    if var < threshold:
         return 1
     else:
         return 0
@@ -134,13 +132,13 @@ def ratioPeakCount(x, lowestValue=-1):
     else:
         return horizontalPeakCount(x, lowestValue)/vpc
 
-# @labeling_function()
-def lf_RatioPeakCount(x):
+@labeling_function()
+def classifyRatioPeakCount(x):
     # Return a label of 0 if ratioPeakCount() < threshold, otherwise 1
     threshold = 1.5 # threshold between 0 and 1
-    rpc = ratioPeakCount(x)
+    var = ratioPeakCount(x)
 
-    if rpc < threshold:
+    if var < threshold:
         return 1
     else:
         return 0
@@ -151,13 +149,13 @@ def edgeDetectVertical(x):
     edgeImage = filters.roberts(image)
     return verticalPeakCount(edgeImage, lowestValue=0)
 
-# @labeling_function()
-def lf_EdgeDetectVertical(x):
+@labeling_function()
+def classifyEdgeDetectVertical(x):
     # Return a label of 0 if edgeDetectVertical() < threshold, otherwise 1
     threshold = 0.5 # threshold between 0 and 1
-    edv = edgeDetectVertical(x)
+    var = edgeDetectVertical(x)
 
-    if edv < threshold:
+    if var < threshold:
         return 1
     else:
         return 0
@@ -168,13 +166,13 @@ def edgeDetectHorizontal(x):
     edgeImage = filters.roberts(image)
     return horizontalPeakCount(edgeImage, lowestValue=0)
 
-# @labeling_function()
-def lf_EdgeDetectHorizontal(x):
+@labeling_function()
+def classifyEdgeDetectHorizontal(x):
     # Return a label of 0 if edgeDetectHorizontal() < threshold, otherwise 1
     threshold = 2.5 # threshold between 0 and 1
-    edh = edgeDetectHorizontal(x)
+    var = edgeDetectHorizontal(x)
 
-    if edh < threshold:
+    if var < threshold:
         return 1
     else:
         return 0
@@ -185,13 +183,13 @@ def edgeDetectRatio(x):
     edgeImage = filters.roberts(image)
     return ratioPeakCount(edgeImage, lowestValue=0)
 
-# @labeling_function()
-def lf_EdgeDetectRatio(x):
+@labeling_function()
+def classifyEdgeDetectRatio(x):
     # Return a label of 0 if edgeDetectRatio() < threshold, otherwise 1
     threshold = 1.5 # threshold between 0 and 1
-    edh = edgeDetectRatio(x)
+    var = edgeDetectRatio(x)
 
-    if edh < threshold:
+    if var < threshold:
         return 1
     else:
         return 0
