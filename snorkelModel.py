@@ -25,7 +25,7 @@ def getLabelMatrix():
     # create L from data; matrix of labeling functions and their classifications
     applier = LFApplier(lfs=lfs)
     labelMatrix = applier.apply(data)
-    return labelMatrix
+    return labelMatrix, lfs
 
 def getMajorityPredictions(labelMatrix):
     # majority model
@@ -43,17 +43,17 @@ def getModelPredictions(labelMatrix):
 def printAccuracy(predictions, targets, modelName):
     correct = 0
     for p, t in zip(predictions, targets):
-    if p == t:
-        correct += 1
+        if p == t:
+            correct += 1
 
     percent = (correct/len(targets))*100
     print("Correctly classified by the ", modelName, ": ", percent)
 
 if __name__ == "__main__":
-    data, targets = loadData.loadMNIST() # load data ands targets
-    labelMatrix = getLabelMatrix() # create label matrix
+    data, targets = loadData.loadMNIST()
+    labelMatrix, lfs = getLabelMatrix()
     print(LFAnalysis(L=labelMatrix, lfs=lfs).lf_summary())
-    majorityPreds = getMajorityPredictions(labelMatrix) # majority model
-    modelPreds = getModelPredictions(labelMatrix) # Snorkel label model
-    printAccuracy(majorityPreds, targets, "Majority Model") # print accuracies
+    majorityPreds = getMajorityPredictions(labelMatrix)
+    modelPreds = getModelPredictions(labelMatrix)
+    printAccuracy(majorityPreds, targets, "Majority Model")
     printAccuracy(modelPreds, targets, "Label Model")

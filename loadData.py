@@ -6,7 +6,6 @@ from torch.utils.data import DataLoader
 import numpy as np
 
 # --- Load MNIST Data ----------------------------------------------------------
-
 def loadMNIST():
     batch_size = 12665
 
