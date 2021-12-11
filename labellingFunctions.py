@@ -194,24 +194,44 @@ def classifyEdgeDetectRatio(x):
     else:
         return 0
 
+def fourierTransorm1D(x):
+    yf = fft(x)
+    coefficients = 20
+    # sum of the first 20 fourier coeficients
+    return np.sum(2.0 /(28*28) * np.abs(yf[0:coefficients]))
 
-def fourier_Transorm(x):
-    yf=fft(x)
-    c=20
-    #sum of the first 20 fourier coeficients
-    return np.sum(2.0 /(28*28) * np.abs(yf[0:c]))
+@labeling_function()
+def classifyFourierTransform1D(x):
+    # Return a label of 0 if fourierTransorm1D() < threshold, otherwise 1
+    threshold = 1.5 # threshold between 0 and 1
+    var = fourierTransorm1D(x)
 
+    if var < threshold:
+        return 1
+    else:
+        return 0
 
-def fft_ndimensions(x):
-    x=x.reshape(28,28)
-    yf=fftn(x)
+def fourierTransorm2D(x):
+    x = x.reshape(28,28)
+    yf = fftn(x)
     # take first 10 coeficients again.
     return np.sum(np.abs(yf)[:10,:10])
+
+@labeling_function()
+def classifyFourierTransform2D(x):
+    # Return a label of 0 if fourierTransorm2D() < threshold, otherwise 1
+    threshold = 1.5 # threshold between 0 and 1
+    var = fourierTransorm2D(x)
+
+    if var < threshold:
+        return 1
+    else:
+        return 0
+
 
 def log_regression(x):
     # okay still need to do the noisy logistic regression.
     pass
-
 
 if __name__ == '__main__':
     fft_ndimensions(np.random.random((28*28)))
