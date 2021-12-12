@@ -252,7 +252,8 @@ def log_regression(x):
 
 
 def vis_ratioPeakCount(x):
-    fitness=ratioPeakCount(x,lowestValue=-.5)
+    fitness=ratioPeakCount(x,lowestValue=-.5)]
+    return fitness
 
 
 
