@@ -4,7 +4,7 @@ from skimage.morphology import reconstruction
 from scipy.signal import find_peaks
 from scipy.fft import fft,fftn
 from skimage import filters
-from snorkel.labeling import labeling_function
+# from snorkel.labeling import labeling_function
 
 # --- Noisy labeling Functions for MNIST dataset -------------------------------
 
@@ -16,7 +16,7 @@ from snorkel.labeling import labeling_function
 def pixelCount(x, lowestValue=-1, axis=None):
     return np.count_nonzero(x > lowestValue, axis=axis)
 
-@labeling_function()
+# @labeling_function()
 def classifyPixelCount(x):
     # Return a label of 0 if pixelCount() < threshold, otherwise 1
     threshold = 130 # threshold between 0 and 1
@@ -40,7 +40,7 @@ def fillCount(x,lowestValue=-1): # fills enclosed parts and returns count of non
     count = pixelCount(filledImage,lowestValue=lowestValue)
     return count
 
-@labeling_function()
+# @labeling_function()
 def classifyFillCount(x):
     # Return a label of 0 if fillCount() < threshold, otherwise 1
     threshold = 150 # threshold between 0 and 1
@@ -56,7 +56,7 @@ def fillSum(x): # fills enclosed parts and sums grayscale image
     filled = fill(image)
     return np.sum(filled)
 
-@labeling_function()
+# @labeling_function()
 def classifyFillSum(x):
     # Return a label of 0 if fillSum() < threshold, otherwise 1
     threshold = -550 # threshold between 0 and 1
@@ -69,9 +69,10 @@ def classifyFillSum(x):
 
 def l2Norm(x): # returns the L2 norm of the image
     image = x.reshape(28, 28)
-    return np.linalg.norm(image)
+    ones=np.ones_like(image)*-1
+    return np.linalg.norm(image-ones)
 
-@labeling_function()
+# @labeling_function()
 def classifyL2Norm(x):
     # Return a label of 0 if l2Norm() < threshold, otherwise 1
     threshold = 27.1 # threshold between 0 and 1
@@ -95,7 +96,7 @@ def horizontalPeakCount(x, lowestValue=-1):
     image = x.reshape(28,28)
     return peakCount(image, lowestValue, height, prominence, axis=0)
 
-@labeling_function()
+# @labeling_function()
 def classifyHorizontalPeakCount(x):
     # Return a label of 0 if horizontalPeakCount() < threshold, otherwise 1
     threshold = 1.5 # threshold between 0 and 1
@@ -113,7 +114,7 @@ def verticalPeakCount(x, lowestValue=-1):
     image = x.reshape(28,28)
     return peakCount(image, lowestValue, height, prominence, axis=1)
 
-@labeling_function()
+# @labeling_function()
 def classifyVerticalPeakCount(x):
     # Return a label of 0 if verticalPeakCount() < threshold, otherwise 1
     threshold = 0.5 # threshold between 0 and 1
@@ -132,7 +133,7 @@ def ratioPeakCount(x, lowestValue=-1):
     else:
         return horizontalPeakCount(x, lowestValue)/vpc
 
-@labeling_function()
+# @labeling_function()
 def classifyRatioPeakCount(x):
     # Return a label of 0 if ratioPeakCount() < threshold, otherwise 1
     threshold = 1.5 # threshold between 0 and 1
@@ -144,12 +145,12 @@ def classifyRatioPeakCount(x):
         return 0
 
 # does roberts edge detection and counts peaks in the vertical direction
-def edgeDetectVertical(x):
+def edgeDetectVertical(x,lowestValue=0):
     image = x.reshape(28, 28)
     edgeImage = filters.roberts(image)
-    return verticalPeakCount(edgeImage, lowestValue=0)
+    return verticalPeakCount(edgeImage, lowestValue=lowestValue)
 
-@labeling_function()
+# @labeling_function()
 def classifyEdgeDetectVertical(x):
     # Return a label of 0 if edgeDetectVertical() < threshold, otherwise 1
     threshold = 0.5 # threshold between 0 and 1
@@ -166,7 +167,7 @@ def edgeDetectHorizontal(x):
     edgeImage = filters.roberts(image)
     return horizontalPeakCount(edgeImage, lowestValue=0)
 
-@labeling_function()
+# @labeling_function()
 def classifyEdgeDetectHorizontal(x):
     # Return a label of 0 if edgeDetectHorizontal() < threshold, otherwise 1
     threshold = 2.5 # threshold between 0 and 1
@@ -178,12 +179,12 @@ def classifyEdgeDetectHorizontal(x):
         return 0
 
 # edge detection and returns ratio of peaks in horizontal and vertical direction
-def edgeDetectRatio(x):
+def edgeDetectRatio(x,lowestValue=0):
     image = x.reshape(28, 28)
     edgeImage = filters.roberts(image)
-    return ratioPeakCount(edgeImage, lowestValue=0)
+    return ratioPeakCount(edgeImage, lowestValue=lowestValue)
 
-@labeling_function()
+# @labeling_function()
 def classifyEdgeDetectRatio(x):
     # Return a label of 0 if edgeDetectRatio() < threshold, otherwise 1
     threshold = 1.5 # threshold between 0 and 1
@@ -201,16 +202,35 @@ def fourier_Transorm(x):
     #sum of the first 20 fourier coeficients
     return np.sum(2.0 /(28*28) * np.abs(yf[0:c]))
 
+def fourier_Transorm_c3(x):
+    yf=fft(x)
+    c=3
+    #sum of the first 20 fourier coeficients
+    return np.sum(2.0 /(28*28) * np.abs(yf[0:c]))
+
 
 def fft_ndimensions(x):
     x=x.reshape(28,28)
     yf=fftn(x)
     # take first 10 coeficients again.
     return np.sum(np.abs(yf)[:10,:10])
+def fft_ndimensionsc5(x):
+    x=x.reshape(28,28)
+    yf=fftn(x)
+    # take first 10 coeficients again.
+    return np.sum(np.abs(yf)[:5,:5])
 
 def log_regression(x):
     # okay still need to do the noisy logistic regression.
     pass
+
+
+def vis_ratioPeakCount(x):
+    fitness=ratioPeakCount(x,lowestValue=-.5)
+
+
+
+
 
 
 if __name__ == '__main__':

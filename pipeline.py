@@ -153,15 +153,54 @@ class edgeDetectHorizontal(labeling):
 class fourier_Transorm(labeling):
     def find_fitness(self):
         return lf.fourier_Transorm(self.x)
+
+class fourier_Transormc3(labeling):
+    def find_fitness(self):
+        return lf.fourier_Transorm_c3(self.x)
 class fft_ndimensions(labeling):
     def find_fitness(self):
         return lf.fft_ndimensions(self.x)
+
+class fft_ndimensionsc5(labeling):
+    def find_fitness(self):
+        return lf.fft_ndimensionsc5(self.x)
+
+class l2Norm(labeling):
+    def find_fitness(self):
+        return lf.l2Norm(self.x)
+class edgeDetectRatio(labeling):
+    def find_fitness(self):
+        return lf.edgeDetectRatio(self.x)
+class random_guess(l2Norm):
+    def __init__(self,x=None):
+
+        # will have to look at like the seed and the fitness in the save.
+        # make sure its like okay. Should definetely update it in the constructor.
+
+        super().__init__(x)
+        self.seed=np.random.randint(0,2)
+        self.fit=np.random.random()*20+5
+    def find_fitness(self):
+        if self.seed:
+            return super().find_fitness()
+        else:
+            return self.fit
+
+
 
 def main_ns(input):
     T=ns.ns(**input)
     # # save the data what we just made
     X=np.array([p.x for p in T])
     np.savetxt(fs.filename_ns(input), X)
+
+class edgeDetectVertical(labeling):
+    def find_fitness(self):
+        return lf.edgeDetectVertical(self.x,lowestValue=.5)
+
+class edgeDetectRatio(labeling):
+    def find_fitness(self):
+        return lf.edgeDetectRatio(self.x,lowestValue=.5)
 
 
 def artists(ax,arr,xy,offset):
@@ -191,12 +230,15 @@ def main_dg(neighbors,input):
     x = [xy[0] for xy in xypoints]
     y = [xy[1] for xy in xypoints]
 
-    offset=[25,50]
+    offset=[25,50,75]
     j=0
+    i=0
     for xy in xypoints:
         if len(xy)>2 and len(xy[2])>2:
-            artists(ax,xy[2].reshape(28,28),(xy[0],xy[1]),offset[j%2])
-            j+=1
+            if i%3==0:
+                artists(ax,xy[2].reshape(28,28),(xy[0],xy[1]),offset[j%3])
+                j+=1
+            i+=1
 
 
     # ax.set_title(f"Neighbors {neighbors}")
@@ -218,8 +260,19 @@ def main_dg(neighbors,input):
         # want to run dg for however many neighbors i've specified and save figures
 
         # then like yeah nvmd that's all i want to do lol.
+    return y
 
-
+def show_hist(func):
+    point=func()
+    y=[point.find_fitness()]
+    for i in range(5000):
+        point.mutate()
+        y.append(point.find_fitness())
+    plt.clf()
+    plt.hist(y,bins=100)
+    plt.xlabel('fitness')
+    plt.ylabel('occurences')
+    plt.show()
 
 def unit_test_labeling_class():
 
@@ -267,13 +320,18 @@ if __name__=="__main__":
 
     # make sure to have an N that properly dissociates
     point_funcs=[pixelCount,fillSum]
-    input=  {'point':fft_ndimensions, 'm': 20, 'K': 300, 'N': 100,'checkpoint':10}
+    input=  {'point':fourier_Transormc3, 'm': 20, 'K': 300, 'N': 100,'checkpoint':10}
     # i bet you lambda3 didn't actually converge lol. b/c like why it makes
     # no sense. some of them should have way higher norms.
-    main_ns(input)
+    # main_ns(input)
+    # #
+    # for i in [1,2,3,4,5,8,10]:
+    #     main_dg(i,input)
+    #
+    show_hist(input['point'])
 
-    for i in [1,2,3,4,5,8,10]:
-        main_dg(i,input)
+    # for i in [10,12,15,17,20,30]:
+    #     main_dg(i,input)
     # unit_test_labeling_class()
     # unit_test_labeling_class()
 
