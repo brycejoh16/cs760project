@@ -10,7 +10,9 @@ Note snorkel requires that you use networkx 0.2.6 while these modules require 2.
 Will need to make two seperate environments to run the code, one for snorkel, 
 one for the visualization. A bummer, but a consequence of dependencies I guess. 
 
+**Because of the difficulty switching between environments due to conflicting libraries, we have included a .ipynb file containing all of the code needed to run the Snorkel stuff separately. Snorkel can be installed using the first cell and the subsequent cells do different operations like plotting histograms or getting accuracies of labeling functions.**
 
+If you need help running the code please contact `bcjohnson7@wisc.edu` for help in running the visualizations and `cbailey9@wisc.edu` for help running the labeling function accuracies and histogram function plotting. `SnorkelEnvironment.ipynb` 
 
 
 To run the output of a labeling function go to  `pipeline.py` and specify the input via a choice of a labeling function in the input dictionary.
@@ -26,4 +28,4 @@ Description of major modules:
 3. `pipeline.py` - entry point to do runs over different labeling functions.
 
 
-Because of the difficulty switching between environments due to conflicting libraries, we have included a .ipynb file containing all of the code needed to run the Snorkel stuff separately. Snorkel can be installed using the first cell and the subsequetn cells do different operations like plotting histograms or getting accuracies of labeling functions.
+
